@@ -92,11 +92,70 @@ namespace HeapTree
             HeapifyUp(parent);
         }
 
+        public T Pop()
+        {
+            if (IsEmpty)
+            {
+                throw new InvalidOperationException();
+            }
+
+            T root = tree[0];
+
+            tree[0] = tree[Count - 1];
+            tree[Count - 1] = default(T);
+
+            HeapifyDown(0);
+
+            return root;
+        }
+
+        public void HeapifyDown(int index)
+        {
+            int leftchild = index * 2 + 1;
+
+            if (leftchild >= Count)
+            {
+                return;
+            }
+
+            int rightchild = index * 2 + 2;
+
+            int swapindex = 0;
+
+            if (rightchild >= Count)
+            {
+                swapindex = leftchild;
+            }
+
+            else
+            {
+                swapindex = Comparer.Compare(tree[leftchild], tree[rightchild]) < 0 ? leftchild : rightchild;
+            }
+
+            if (Comparer.Compare(tree[swapindex], tree[index]) < 0)
+            {
+                T temp = tree[index];
+                tree[index] = tree[swapindex];
+                tree[swapindex] = temp;
+            }
+
+            HeapifyDown(swapindex);
+        }
+
         public void IncreaseCapacity()
         {
             T[] temp = new T[Capacity * 2];
             tree.CopyTo(temp, 0);
             tree = temp;
         }
+
+        public void Heapify()
+        {
+            for (int i = (Count - 2) / 2; i > -1; i--)
+            {
+                HeapifyDown(i);
+            }
+        }
+
     }
 }
